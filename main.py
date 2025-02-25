@@ -225,7 +225,7 @@ if __name__ == '__main__':
     pygame.display.flip()
     hod = 0
     gamezone = []
-    gamezone_sprites = []
+    gamezone_sprites = pygame.sprite.Group()
     while running:
         if koloda:
             for event in pygame.event.get():
@@ -236,19 +236,22 @@ if __name__ == '__main__':
                         gamezone.append(koloda.pop())
                         gamezone[-1].set_x(70 + 110 * len(gamezone))
                         gamezone[-1].set_y(280)
-                        screen.blit(gamezone[-1].sprite.image, gamezone[-1].sprite.rect)
-                        gamezone_sprites.append(gamezone[-1].sprite)
+                        x = gamezone[-1].sprite
+                        gamezone_sprites.add(gamezone[-1].sprite)
+                        gamezone_sprites.draw(screen)
                         pygame.display.flip()
                         if check(gamezone):
                             pygame.time.wait(2000)
                             bita += gamezone
-                            for i in range(len(gamezone_sprites)):
-                                gamezone_sprites[i].kill()
                             gamezone = []
-                            gamezone_sprites = []
+                            for i in gamezone_sprites.sprites():
+                                gamezone_sprites.remove(i)
                             hod = (hod + 1) % 2
+                            screen.fill(pygame.Color('yellow'))
+                            all_sprites.draw(screen)
+                            pygame.display.flip()
                         elif type(gamezone[-1]) == Rom:
-                            pass
+                            gamezone.append([])
                         elif type(gamezone[-1]) == Kompas:
                             pass
                         elif type(gamezone[-1]) == Yakor:
