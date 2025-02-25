@@ -31,7 +31,7 @@ class Pistol(Karta):
     def __init__(self, points):
         super(Pistol, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('пистоль\\пистоль' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('пистоль\\пистоль' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -45,7 +45,7 @@ class Popugai(Karta):
     def __init__(self, points):
         super(Popugai, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('попугай\\попугай' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('попугай\\попугай' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -59,7 +59,7 @@ class Mech(Karta):
     def __init__(self, points):
         super(Mech, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('меч\\меч' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('меч\\меч' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -73,7 +73,7 @@ class Sunduk(Karta):
     def __init__(self, points):
         super(Sunduk, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('сундук\\сундук' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('сундук\\сундук' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -87,7 +87,7 @@ class Kluch(Karta):
     def __init__(self, points):
         super(Kluch, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('ключ\\ключ' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('ключ\\ключ' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -101,7 +101,7 @@ class Svecha(Karta):
     def __init__(self, points):
         super(Svecha, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('свеча\\свеча' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('свеча\\свеча' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -115,7 +115,7 @@ class Shturval(Karta):
     def __init__(self, points):
         super(Shturval, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('штурвал\\штурвал' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('штурвал\\штурвал' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -129,7 +129,7 @@ class Kompas(Karta):
     def __init__(self, points):
         super(Kompas, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('компас\\компас' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('компас\\компас' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -143,7 +143,7 @@ class Yakor(Karta):
     def __init__(self, points):
         super(Yakor, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('якорь\\якорь' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('якорь\\якорь' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -157,7 +157,7 @@ class Rom(Karta):
     def __init__(self, points):
         super(Rom, self).__init__(points)
         self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('ром\\ром' + str(points) + '.png'), (140, 200))
+        self.sprite.image = pygame.transform.scale(load_image('ром\\ром' + str(points) + '.png'), (100, 150))
         self.sprite.rect = self.sprite.image.get_rect()
 
     def set_x(self, x):
@@ -233,16 +233,19 @@ if __name__ == '__main__':
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if sprite.rect.collidepoint(event.pos):
-                        gamezone.append(koloda[-1])
-                        gamezone[-1].set_x(20 + 150 * len(gamezone))
-                        gamezone[-1].set_y(250)
+                        gamezone.append(koloda.pop())
+                        gamezone[-1].set_x(70 + 110 * len(gamezone))
+                        gamezone[-1].set_y(280)
                         screen.blit(gamezone[-1].sprite.image, gamezone[-1].sprite.rect)
                         gamezone_sprites.append(gamezone[-1].sprite)
                         pygame.display.flip()
                         if check(gamezone):
                             pygame.time.wait(2000)
                             bita += gamezone
+                            for i in range(len(gamezone_sprites)):
+                                gamezone_sprites[i].kill()
                             gamezone = []
+                            gamezone_sprites = []
                             hod = (hod + 1) % 2
                         elif type(gamezone[-1]) == Rom:
                             pass
