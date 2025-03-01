@@ -176,6 +176,31 @@ def check(gz):
 
 bita = list()
 
+
+def get_cards(gamezone, player):
+    for i in gamezone:
+        if type(i) == Kompas:
+            player['компас'].append(i)
+        if type(i) == Rom:
+            player['ром'].append(i)
+        if type(i) == Yakor:
+            player['якорь'].append(i)
+        if type(i) == Svecha:
+            player['свеча'].append(i)
+        if type(i) == Shturval:
+            player['штурвал'].append(i)
+        if type(i) == Sunduk:
+            player['сундук'].append(i)
+        if type(i) == Kluch:
+            player['ключ'].append(i)
+        if type(i) == Mech:
+            player['меч'].append(i)
+        if type(i) == Pistol:
+            player['пистоль'].append(i)
+        if type(i) == Popugai:
+            player['попугай'].append(i)
+
+
 koloda = [Rom(i) for i in range(2, 8)]
 koloda += [Kompas(i) for i in range(2, 8)]
 koloda += [Yakor(i) for i in range(2, 8)]
@@ -187,8 +212,10 @@ koloda += [Kluch(i) for i in range(2, 8)]
 koloda += [Sunduk(i) for i in range(2, 8)]
 koloda += [Mech(i) for i in range(2, 8)]
 shuffle(koloda)
-first_player = []
-second_player = []
+first_player = {'ром': [], 'компас': [], 'якорь': [], 'пистоль': [], 'попугай': [], 'свеча': [], 'штурвал': [],
+                'ключ': [], 'сундук': [], 'меч': []}
+second_player = {'ром': [], 'компас': [], 'якорь': [], 'пистоль': [], 'попугай': [], 'свеча': [], 'штурвал': [],
+                 'ключ': [], 'сундук': [], 'меч': []}
 if __name__ == '__main__':
     size = width, height = 0, 0
     screen = pygame.display.set_mode(size, pygame.FULLSCREEN)
@@ -196,7 +223,7 @@ if __name__ == '__main__':
     sprite2 = pygame.sprite.Sprite()
     all_sprites = pygame.sprite.Group()
     zastavka = load_image('заставка.png')
-    tzastavka = pygame.transform.scale(zastavka, (1350, 775))
+    tzastavka = pygame.transform.scale(zastavka, (1375, 775))
     sprite2.image = tzastavka
     sprite2.rect = sprite2.image.get_rect()
     all_sprites.add(sprite2)
@@ -221,11 +248,18 @@ if __name__ == '__main__':
     sprite.rect.x = 20
     sprite.rect.y = 250
     all_sprites.draw(screen)
+    first_player_rect = pygame.rect.Rect(0, 600, 675, 200)
+    second_player_rect = pygame.rect.Rect(695, 600, 685, 200)
+    razd = pygame.rect.Rect(675, 600, 20, 200)
+    pygame.draw.rect(screen, pygame.Color('black'), razd)
+    pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
+    pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
     running = True
     pygame.display.flip()
     hod = 0
     gamezone = []
     gamezone_sprites = pygame.sprite.Group()
+    first_player_sprites = pygame.sprite.Group()
     while running:
         if koloda:
             for event in pygame.event.get():
@@ -236,7 +270,6 @@ if __name__ == '__main__':
                         gamezone.append(koloda.pop())
                         gamezone[-1].set_x(70 + 110 * len(gamezone))
                         gamezone[-1].set_y(280)
-                        x = gamezone[-1].sprite
                         gamezone_sprites.add(gamezone[-1].sprite)
                         gamezone_sprites.draw(screen)
                         pygame.display.flip()
@@ -249,12 +282,38 @@ if __name__ == '__main__':
                             hod = (hod + 1) % 2
                             screen.fill(pygame.Color('yellow'))
                             all_sprites.draw(screen)
+                            pygame.draw.rect(screen, pygame.Color('black'), razd)
+                            pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
+                            pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
                             pygame.display.flip()
                         elif type(gamezone[-1]) == Rom:
-                            gamezone.append([])
+                            pygame.time.wait(2000)
+                            if len(koloda) >= 1:
+                                gamezone.append(koloda.pop())
+                                gamezone[-1].set_x(70 + 110 * len(gamezone))
+                                gamezone[-1].set_y(280)
+                                gamezone_sprites.add(gamezone[-1].sprite)
+                                if len(koloda) >= 1:
+                                    gamezone.append(koloda.pop())
+                                    gamezone[-1].set_x(70 + 110 * len(gamezone))
+                                    gamezone[-1].set_y(280)
+                                    gamezone_sprites.add(gamezone[-1].sprite)
+                            gamezone_sprites.draw(screen)
+                            pygame.display.flip()
+                            if check(gamezone):
+                                pygame.time.wait(2000)
+                                bita += gamezone
+                                gamezone = []
+                                for i in gamezone_sprites.sprites():
+                                    gamezone_sprites.remove(i)
+                                hod = (hod + 1) % 2
+                                screen.fill(pygame.Color('yellow'))
+                                all_sprites.draw(screen)
+                                pygame.draw.rect(screen, pygame.Color('black'), razd)
+                                pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
+                                pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
+                                pygame.display.flip()
                         elif type(gamezone[-1]) == Kompas:
-                            pass
-                        elif type(gamezone[-1]) == Yakor:
                             pass
                         elif type(gamezone[-1]) == Svecha:
                             pass
@@ -264,4 +323,20 @@ if __name__ == '__main__':
                             pass
                         elif type(gamezone[-1]) == Mech:
                             pass
-    pygame.quit()
+                    if first_player_rect.collidepoint(event.pos) and hod == 0:
+                        for i in gamezone_sprites.sprites():
+                            gamezone_sprites.remove(i)
+                        for i in first_player_sprites:
+                            first_player_sprites.remove(i)
+                        screen.fill(pygame.Color('yellow'))
+                        all_sprites.draw(screen)
+                        pygame.draw.rect(screen, pygame.Color('black'), razd)
+                        pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
+                        pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
+                        for i in first_player_sprites:
+                            first_player_sprites.remove(i)
+                        for tip in range(len(first_player.keys())):
+                            for i in first_player[list(first_player.keys())[tip]]:
+                                pass
+                    pygame.display.flip()
+pygame.quit()
