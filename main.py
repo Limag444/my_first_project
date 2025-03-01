@@ -324,19 +324,27 @@ if __name__ == '__main__':
                         elif type(gamezone[-1]) == Mech:
                             pass
                     if first_player_rect.collidepoint(event.pos) and hod == 0:
+                        hod = (hod + 1) % 2
                         for i in gamezone_sprites.sprites():
                             gamezone_sprites.remove(i)
-                        for i in first_player_sprites:
+                        for i in first_player_sprites.sprites():
                             first_player_sprites.remove(i)
                         screen.fill(pygame.Color('yellow'))
                         all_sprites.draw(screen)
                         pygame.draw.rect(screen, pygame.Color('black'), razd)
                         pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
                         pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
-                        for i in first_player_sprites:
-                            first_player_sprites.remove(i)
+                        get_cards(gamezone, first_player)
+                        print(first_player)
                         for tip in range(len(first_player.keys())):
-                            for i in first_player[list(first_player.keys())[tip]]:
-                                pass
+                            for i in range(len(first_player[list(first_player.keys())[tip]])):
+                                print('hello')
+                                a = sorted(first_player[list(first_player.keys())[tip]], key=lambda x: x.get_points())
+                                a[i].sprite.x = 20 + 50 * tip
+                                a[i].sprite.y = 700 + 10 * i
+                                first_player_sprites.add(a[i].sprite)
+                        first_player_sprites.draw(screen)
+                        gamezone = []
+                        pygame.display.flip()
                     pygame.display.flip()
 pygame.quit()
