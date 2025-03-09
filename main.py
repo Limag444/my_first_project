@@ -1,7 +1,7 @@
 import pygame
 import os
 import sys
-from random import shuffle
+from random import shuffle, choices
 
 pygame.init()
 
@@ -186,7 +186,7 @@ if __name__ == '__main__':
             if event.type == pygame.MOUSEBUTTONDOWN:
                 zas = False
     sprite2.kill()
-    screen.fill(pygame.Color('yellow'))
+    screen.fill(pygame.Color((50, 150, 150)))
     karta = load_image('колода.png')
     karta1 = pygame.transform.scale(karta, (180, 200))
     sprite = pygame.sprite.Sprite()
@@ -231,6 +231,13 @@ if __name__ == '__main__':
                                 if type(gamezone[i]) == Yakor:
                                     ind = i
                                     break
+                            if Sunduk in [type(i) for i in gamezone[:ind + 1]] and Kluch in [type(i) for i in
+                                                                                             gamezone[:ind + 1]]:
+                                count = min([len(bita), ind + 1])
+                                if hod == 0:
+                                    get_cards(choices(bita, k=count), first_player)
+                                if hod == 1:
+                                    get_cards(choices(bita, k=count), second_player)
                             if hod == 0:
                                 get_cards(gamezone[0:ind + 1], first_player)
                             else:
@@ -258,7 +265,7 @@ if __name__ == '__main__':
                             for i in gamezone_sprites.sprites():
                                 gamezone_sprites.remove(i)
                             hod = (hod + 1) % 2
-                            screen.fill(pygame.Color('yellow'))
+                            screen.fill(pygame.Color((50, 150, 150)))
                             all_sprites.draw(screen)
                             pygame.draw.rect(screen, pygame.Color('black'), razd)
                             pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
@@ -280,13 +287,20 @@ if __name__ == '__main__':
                                     gamezone_sprites.add(gamezone[-1].sprite)
                             gamezone_sprites.draw(screen)
                             pygame.display.flip()
-                            if check(gamezone):
+                            if check(gamezone) or check(gamezone[:-1]):
                                 pygame.time.wait(2000)
                                 ind = -1
                                 for i in range(len(gamezone)):
                                     if type(gamezone[i]) == Yakor:
                                         ind = i
                                         break
+                                if Sunduk in [type(i) for i in gamezone[:ind + 1]] and Kluch in [type(i) for i in
+                                                                                                 gamezone[:ind + 1]]:
+                                    count = min([len(bita), ind + 1])
+                                    if hod == 0:
+                                        get_cards(choices(bita, k=count), first_player)
+                                    if hod == 1:
+                                        get_cards(choices(bita, k=count), second_player)
                                 if hod == 0:
                                     get_cards(gamezone[:ind + 1], first_player)
                                 else:
@@ -316,7 +330,7 @@ if __name__ == '__main__':
                                 bita += gamezone[ind + 1:]
                                 gamezone = []
                                 hod = (hod + 1) % 2
-                                screen.fill(pygame.Color('yellow'))
+                                screen.fill(pygame.Color((50, 150, 150)))
                                 all_sprites.draw(screen)
                                 pygame.draw.rect(screen, pygame.Color('black'), razd)
                                 pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
@@ -334,12 +348,19 @@ if __name__ == '__main__':
                             gamezone_sprites.remove(i)
                         for i in first_player_sprites.sprites():
                             first_player_sprites.remove(i)
-                        screen.fill(pygame.Color('yellow'))
+                        screen.fill(pygame.Color((50, 150, 150)))
                         all_sprites.draw(screen)
                         pygame.draw.rect(screen, pygame.Color('black'), razd)
                         pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
                         pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
                         get_cards(gamezone, first_player)
+                        if Sunduk in [type(i) for i in gamezone] and Kluch in [type(i) for i in
+                                                                               gamezone]:
+                            count = min([len(bita), len(gamezone)])
+                            if hod == 0:
+                                get_cards(choices(bita, k=count), first_player)
+                            if hod == 1:
+                                get_cards(choices(bita, k=count), second_player)
                         for tip in range(len(first_player.keys())):
                             a = sorted(first_player[list(first_player.keys())[tip]], key=lambda x: x.get_points())
                             for i in range(len(first_player[list(first_player.keys())[tip]])):
@@ -358,12 +379,19 @@ if __name__ == '__main__':
                             gamezone_sprites.remove(i)
                         for i in second_player_sprites.sprites():
                             second_player_sprites.remove(i)
-                        screen.fill(pygame.Color('yellow'))
+                        screen.fill(pygame.Color((50, 150, 150)))
                         all_sprites.draw(screen)
                         pygame.draw.rect(screen, pygame.Color('black'), razd)
                         pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
                         pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
                         get_cards(gamezone, second_player)
+                        if Sunduk in [type(i) for i in gamezone] and Kluch in [type(i) for i in
+                                                                               gamezone]:
+                            count = min([len(bita), len(gamezone)])
+                            if hod == 0:
+                                get_cards(choices(bita, k=count), first_player)
+                            if hod == 1:
+                                get_cards(choices(bita, k=count), second_player)
                         for tip in range(len(second_player.keys())):
                             a = sorted(second_player[list(second_player.keys())[tip]], key=lambda x: x.get_points())
                             for i in range(len(second_player[list(second_player.keys())[tip]])):
@@ -400,4 +428,30 @@ if __name__ == '__main__':
     for i in second_player_sprites.sprites():
         second_player_sprites.remove(i)
     screen.fill(pygame.Color('yellow'))
+    run = 1
+    player1 = 0
+    player2 = 0
+    for key in first_player:
+        for i in first_player[key]:
+            player1 += i.get_points()
+    for key in second_player:
+        for i in second_player[key]:
+            player2 += i.get_points()
+    f1 = pygame.font.Font(None, 75)
+    text1 = f1.render(
+        f'Первый игрок: {player1}            Второй игрок: {player2}', True,
+        (180, 0, 0))
+    if player1 > player2:
+        text2 = f1.render(f'Первый игрок выиграл!', True, (180, 0, 0))
+    elif player1 == player2:
+        text2 = f1.render(f'Ничья!', True, (180, 0, 0))
+    else:
+        text2 = f1.render(f'Второй игрок выиграл!', True, (180, 0, 0))
+    screen.blit(text1, (10, 50))
+    screen.blit(text2, (10, 400))
+    pygame.display.flip()
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
     pygame.quit()
