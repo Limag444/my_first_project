@@ -1,7 +1,8 @@
-import pygame
 import os
 import sys
 from random import shuffle, choices
+
+import pygame
 
 pygame.init()
 
@@ -210,7 +211,8 @@ if __name__ == '__main__':
     gamezone_sprites = pygame.sprite.Group()
     first_player_sprites = pygame.sprite.Group()
     second_player_sprites = pygame.sprite.Group()
-    sost = 1
+    komp_sost = 0
+    svecha_sost = 0
     while running:
         if koloda:
             for event in pygame.event.get():
@@ -218,6 +220,9 @@ if __name__ == '__main__':
                     running = False
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if sprite.rect.collidepoint(event.pos):
+                        if komp_sost:
+                            komp_sost = 0
+                            all_sprites.remove(x)
                         gamezone.append(koloda.pop())
                         gamezone[-1].set_x(70 + 110 * len(gamezone))
                         gamezone[-1].set_y(280)
@@ -244,7 +249,7 @@ if __name__ == '__main__':
                                 get_cards(gamezone[0:ind + 1], second_player)
                             for tip in range(len(second_player.keys())):
                                 a = sorted(second_player[list(second_player.keys())[tip]],
-                                           key=lambda x: x.get_points())
+                                           key=lambda i: i.get_points())
                                 for i in range(len(second_player[list(second_player.keys())[tip]])):
                                     a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
                                     a[i].sprite.rect = a[i].sprite.image.get_rect()
@@ -253,7 +258,7 @@ if __name__ == '__main__':
                                     second_player_sprites.add(a[i].sprite)
                             for tip in range(len(first_player.keys())):
                                 a = sorted(first_player[list(first_player.keys())[tip]],
-                                           key=lambda x: x.get_points())
+                                           key=lambda i: i.get_points())
                                 for i in range(len(first_player[list(first_player.keys())[tip]])):
                                     a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
                                     a[i].sprite.rect = a[i].sprite.image.get_rect()
@@ -273,77 +278,87 @@ if __name__ == '__main__':
                             first_player_sprites.draw(screen)
                             second_player_sprites.draw(screen)
                             pygame.display.flip()
-                        elif type(gamezone[-1]) == Rom:
-                            pygame.time.wait(1000)
-                            if len(koloda) >= 1:
-                                gamezone.append(koloda.pop())
-                                gamezone[-1].set_x(70 + 110 * len(gamezone))
-                                gamezone[-1].set_y(280)
-                                gamezone_sprites.add(gamezone[-1].sprite)
+                        else:
+                            if type(gamezone[-1]) == Rom:
+                                pygame.time.wait(1000)
                                 if len(koloda) >= 1:
                                     gamezone.append(koloda.pop())
                                     gamezone[-1].set_x(70 + 110 * len(gamezone))
                                     gamezone[-1].set_y(280)
                                     gamezone_sprites.add(gamezone[-1].sprite)
-                            gamezone_sprites.draw(screen)
-                            pygame.display.flip()
-                            if check(gamezone) or check(gamezone[:-1]):
-                                pygame.time.wait(2000)
-                                ind = -1
-                                for i in range(len(gamezone)):
-                                    if type(gamezone[i]) == Yakor:
-                                        ind = i
-                                        break
-                                if Sunduk in [type(i) for i in gamezone[:ind + 1]] and Kluch in [type(i) for i in
-                                                                                                 gamezone[:ind + 1]]:
-                                    count = min([len(bita), ind + 1])
-                                    if hod == 0:
-                                        get_cards(choices(bita, k=count), first_player)
-                                    if hod == 1:
-                                        get_cards(choices(bita, k=count), second_player)
-                                if hod == 0:
-                                    get_cards(gamezone[:ind + 1], first_player)
-                                else:
-                                    get_cards(gamezone[:ind + 1], second_player)
-                                for i in first_player_sprites.sprites():
-                                    first_player_sprites.remove(i)
-                                for i in gamezone_sprites.sprites():
-                                    gamezone_sprites.remove(i)
-                                for tip in range(len(second_player.keys())):
-                                    a = sorted(second_player[list(second_player.keys())[tip]],
-                                               key=lambda x: x.get_points())
-                                    for i in range(len(second_player[list(second_player.keys())[tip]])):
-                                        a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
-                                        a[i].sprite.rect = a[i].sprite.image.get_rect()
-                                        a[i].sprite.rect.x = 700 + 75 * tip
-                                        a[i].sprite.rect.y = 650 - 10 * i
-                                        second_player_sprites.add(a[i].sprite)
-                                for tip in range(len(first_player.keys())):
-                                    a = sorted(first_player[list(first_player.keys())[tip]],
-                                               key=lambda x: x.get_points())
-                                    for i in range(len(first_player[list(first_player.keys())[tip]])):
-                                        a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
-                                        a[i].sprite.rect = a[i].sprite.image.get_rect()
-                                        a[i].sprite.rect.x = 5 + 75 * tip
-                                        a[i].sprite.rect.y = 650 - 10 * i
-                                        first_player_sprites.add(a[i].sprite)
-                                bita += gamezone[ind + 1:]
-                                gamezone = []
-                                hod = (hod + 1) % 2
-                                screen.fill(pygame.Color((50, 150, 150)))
-                                all_sprites.draw(screen)
-                                pygame.draw.rect(screen, pygame.Color('black'), razd)
-                                pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
-                                pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
-                                second_player_sprites.draw(screen)
-                                first_player_sprites.draw(screen)
+                                    if len(koloda) >= 1:
+                                        gamezone.append(koloda.pop())
+                                        gamezone[-1].set_x(70 + 110 * len(gamezone))
+                                        gamezone[-1].set_y(280)
+                                        gamezone_sprites.add(gamezone[-1].sprite)
+                                gamezone_sprites.draw(screen)
                                 pygame.display.flip()
-                        elif type(gamezone[-1]) == Kompas:
-                            pass
-                        elif type(gamezone[-1]) == Svecha:
-                            pass
+                                if check(gamezone) or check(gamezone[:-1]):
+                                    pygame.time.wait(2000)
+                                    ind = -1
+                                    for i in range(len(gamezone)):
+                                        if type(gamezone[i]) == Yakor:
+                                            ind = i
+                                            break
+                                    if Sunduk in [type(i) for i in gamezone[:ind + 1]] and Kluch in [type(i) for i in
+                                                                                                     gamezone[
+                                                                                                     :ind + 1]]:
+                                        count = min([len(bita), ind + 1])
+                                        if hod == 0:
+                                            get_cards(choices(bita, k=count), first_player)
+                                        if hod == 1:
+                                            get_cards(choices(bita, k=count), second_player)
+                                    if hod == 0:
+                                        get_cards(gamezone[:ind + 1], first_player)
+                                    else:
+                                        get_cards(gamezone[:ind + 1], second_player)
+                                    for i in first_player_sprites.sprites():
+                                        first_player_sprites.remove(i)
+                                    for i in gamezone_sprites.sprites():
+                                        gamezone_sprites.remove(i)
+                                    for tip in range(len(second_player.keys())):
+                                        a = sorted(second_player[list(second_player.keys())[tip]],
+                                                   key=lambda i: i.get_points())
+                                        for i in range(len(second_player[list(second_player.keys())[tip]])):
+                                            a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
+                                            a[i].sprite.rect = a[i].sprite.image.get_rect()
+                                            a[i].sprite.rect.x = 700 + 75 * tip
+                                            a[i].sprite.rect.y = 650 - 10 * i
+                                            second_player_sprites.add(a[i].sprite)
+                                    for tip in range(len(first_player.keys())):
+                                        a = sorted(first_player[list(first_player.keys())[tip]],
+                                                   key=lambda i: i.get_points())
+                                        for i in range(len(first_player[list(first_player.keys())[tip]])):
+                                            a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
+                                            a[i].sprite.rect = a[i].sprite.image.get_rect()
+                                            a[i].sprite.rect.x = 5 + 75 * tip
+                                            a[i].sprite.rect.y = 650 - 10 * i
+                                            first_player_sprites.add(a[i].sprite)
+                                    bita += gamezone[ind + 1:]
+                                    gamezone = []
+                                    hod = (hod + 1) % 2
+                                    screen.fill(pygame.Color((50, 150, 150)))
+                                    all_sprites.draw(screen)
+                                    pygame.draw.rect(screen, pygame.Color('black'), razd)
+                                    pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
+                                    pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
+                                    second_player_sprites.draw(screen)
+                                    first_player_sprites.draw(screen)
+                                    pygame.display.flip()
+                            if type(gamezone[-1]) == Kompas:
+                                x = koloda[-1].sprite
+                                x.rect.x = 700
+                                x.rect.y = 100
+                                all_sprites.add(x)
+                                all_sprites.draw(screen)
+                                pygame.display.flip()
+                                komp_sost = 1
+                            if type(gamezone[-1]) == Svecha:
+                                pass
                     elif first_player_rect.collidepoint(event.pos) and hod == 0 and gamezone:
-                        hod = (hod + 1) % 2
+                        if komp_sost:
+                            komp_sost = 0
+                            all_sprites.remove(x)
                         for i in gamezone_sprites.sprites():
                             gamezone_sprites.remove(i)
                         for i in first_player_sprites.sprites():
@@ -362,7 +377,7 @@ if __name__ == '__main__':
                             if hod == 1:
                                 get_cards(choices(bita, k=count), second_player)
                         for tip in range(len(first_player.keys())):
-                            a = sorted(first_player[list(first_player.keys())[tip]], key=lambda x: x.get_points())
+                            a = sorted(first_player[list(first_player.keys())[tip]], key=lambda i: i.get_points())
                             for i in range(len(first_player[list(first_player.keys())[tip]])):
                                 a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
                                 a[i].sprite.rect = a[i].sprite.image.get_rect()
@@ -372,9 +387,12 @@ if __name__ == '__main__':
                         first_player_sprites.draw(screen)
                         second_player_sprites.draw(screen)
                         gamezone = []
+                        hod = (hod + 1) % 2
                         pygame.display.flip()
                     elif second_player_rect.collidepoint(event.pos) and hod == 1 and gamezone:
-                        hod = (hod + 1) % 2
+                        if komp_sost:
+                            komp_sost = 0
+                            all_sprites.remove(x)
                         for i in gamezone_sprites.sprites():
                             gamezone_sprites.remove(i)
                         for i in second_player_sprites.sprites():
@@ -393,7 +411,7 @@ if __name__ == '__main__':
                             if hod == 1:
                                 get_cards(choices(bita, k=count), second_player)
                         for tip in range(len(second_player.keys())):
-                            a = sorted(second_player[list(second_player.keys())[tip]], key=lambda x: x.get_points())
+                            a = sorted(second_player[list(second_player.keys())[tip]], key=lambda i: i.get_points())
                             for i in range(len(second_player[list(second_player.keys())[tip]])):
                                 a[i].sprite.image = pygame.transform.scale(a[i].sprite.image, (70, 105))
                                 a[i].sprite.rect = a[i].sprite.image.get_rect()
@@ -403,6 +421,7 @@ if __name__ == '__main__':
                         first_player_sprites.draw(screen)
                         second_player_sprites.draw(screen)
                         gamezone = []
+                        hod = (hod + 1) % 2
                         pygame.display.flip()
         else:
             if gamezone:
@@ -411,11 +430,25 @@ if __name__ == '__main__':
                     for i in range(len(gamezone)):
                         if type(gamezone[i]) == Yakor:
                             ind = Yakor
+                    if Sunduk in [type(i) for i in gamezone[:ind + 1]] and Kluch in [type(i) for i in
+                                                                                     gamezone[:ind + 1]]:
+                        count = min([len(bita), ind + 1])
+                        if hod == 0:
+                            get_cards(choices(bita, k=count), first_player)
+                        if hod == 1:
+                            get_cards(choices(bita, k=count), second_player)
                     if hod == 1:
                         get_cards(gamezone[:ind + 1], second_player)
                     if hod == 0:
                         get_cards(gamezone[:ind + 1], first_player)
                 else:
+                    if Sunduk in [type(i) for i in gamezone] and Kluch in [type(i) for i in
+                                                                           gamezone]:
+                        count = min([len(bita), len(gamezone)])
+                        if hod == 0:
+                            get_cards(choices(bita, k=count), first_player)
+                        if hod == 1:
+                            get_cards(choices(bita, k=count), second_player)
                     if hod == 1:
                         get_cards(gamezone, second_player)
                     if hod == 0:
@@ -432,11 +465,11 @@ if __name__ == '__main__':
     player1 = 0
     player2 = 0
     for key in first_player:
-        for i in first_player[key]:
-            player1 += i.get_points()
+        if first_player[key]:
+            player1 += max([i.get_points() for i in first_player[key]])
     for key in second_player:
-        for i in second_player[key]:
-            player2 += i.get_points()
+        if second_player[key]:
+            player2 += max([i.get_points() for i in second_player[key]])
     f1 = pygame.font.Font(None, 75)
     text1 = f1.render(
         f'Первый игрок: {player1}            Второй игрок: {player2}', True,
