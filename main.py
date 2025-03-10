@@ -70,20 +70,6 @@ class Kluch(Karta):
         self.sprite.rect.y = y
 
 
-class Svecha(Karta):
-    def __init__(self, points):
-        super(Svecha, self).__init__(points)
-        self.sprite = pygame.sprite.Sprite()
-        self.sprite.image = pygame.transform.scale(load_image('свеча\\свеча' + str(points) + '.png'), (100, 150))
-        self.sprite.rect = self.sprite.image.get_rect()
-
-    def set_x(self, x):
-        self.sprite.rect.x = x
-
-    def set_y(self, y):
-        self.sprite.rect.y = y
-
-
 class Kompas(Karta):
     def __init__(self, points):
         super(Kompas, self).__init__(points)
@@ -144,8 +130,6 @@ def get_cards(gamezone, player):
             player['ром'].append(i)
         if type(i) == Yakor:
             player['якорь'].append(i)
-        if type(i) == Svecha:
-            player['свеча'].append(i)
         if type(i) == Sunduk:
             player['сундук'].append(i)
         if type(i) == Kluch:
@@ -158,13 +142,12 @@ koloda = [Rom(i) for i in range(2, 8)]
 koloda += [Kompas(i) for i in range(2, 8)]
 koloda += [Yakor(i) for i in range(2, 8)]
 koloda += [Popugai(i) for i in range(4, 10)]
-koloda += [Svecha(i) for i in range(2, 8)]
 koloda += [Kluch(i) for i in range(2, 8)]
 koloda += [Sunduk(i) for i in range(2, 8)]
 shuffle(koloda)
-first_player = {'ром': [], 'компас': [], 'якорь': [], 'попугай': [], 'свеча': [],
+first_player = {'ром': [], 'компас': [], 'якорь': [], 'попугай': [],
                 'ключ': [], 'сундук': []}
-second_player = {'ром': [], 'компас': [], 'якорь': [], 'попугай': [], 'свеча': [],
+second_player = {'ром': [], 'компас': [], 'якорь': [], 'попугай': [],
                  'ключ': [], 'сундук': []}
 if __name__ == '__main__':
     size = width, height = 0, 0
@@ -223,6 +206,14 @@ if __name__ == '__main__':
                         if komp_sost:
                             komp_sost = 0
                             all_sprites.remove(x)
+                            screen.fill(pygame.Color((50, 150, 150)))
+                            all_sprites.draw(screen)
+                            pygame.draw.rect(screen, pygame.Color('black'), razd)
+                            pygame.draw.rect(screen, pygame.Color('brown'), second_player_rect)
+                            pygame.draw.rect(screen, pygame.Color('brown'), first_player_rect)
+                            first_player_sprites.draw(screen)
+                            second_player_sprites.draw(screen)
+                            pygame.display.flip()
                         gamezone.append(koloda.pop())
                         gamezone[-1].set_x(70 + 110 * len(gamezone))
                         gamezone[-1].set_y(280)
@@ -345,16 +336,15 @@ if __name__ == '__main__':
                                     second_player_sprites.draw(screen)
                                     first_player_sprites.draw(screen)
                                     pygame.display.flip()
-                            if type(gamezone[-1]) == Kompas:
-                                x = koloda[-1].sprite
-                                x.rect.x = 700
-                                x.rect.y = 100
-                                all_sprites.add(x)
-                                all_sprites.draw(screen)
-                                pygame.display.flip()
-                                komp_sost = 1
-                            if type(gamezone[-1]) == Svecha:
-                                pass
+                            if gamezone:
+                                if type(gamezone[-1]) == Kompas:
+                                    x = koloda[-1].sprite
+                                    x.rect.x = 700
+                                    x.rect.y = 100
+                                    all_sprites.add(x)
+                                    all_sprites.draw(screen)
+                                    pygame.display.flip()
+                                    komp_sost = 1
                     elif first_player_rect.collidepoint(event.pos) and hod == 0 and gamezone:
                         if komp_sost:
                             komp_sost = 0
